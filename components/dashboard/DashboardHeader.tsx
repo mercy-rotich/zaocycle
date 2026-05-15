@@ -1,3 +1,5 @@
+'use client';
+
 import { LayoutDashboard, Download, RefreshCw, MapPin } from 'lucide-react';
 
 export default function DashboardHeader() {

@@ -1,0 +1,111 @@
+import type { FarmerProfile, PesticideApplication, FarmerPickup, EarningsSummary } from './types';
+
+export const mockFarmer: FarmerProfile = {
+  id: 'F-0042',
+  name: 'Grace Wanjiku Kamau',
+  phone: '+254 712 345 678',
+  ward: 'Mwea',
+  farmSizeAcres: 2.5,
+  crops: ['Tomatoes', 'French Beans', 'Rice'],
+  joinedDate: '2026-01-15',
+};
+
+export const mockEarnings: EarningsSummary = {
+  thisMonthKES: 1250,
+  lastMonthKES: 890,
+  totalEarnedKES: 4820,
+  lastPaymentDate: '2026-04-28',
+  lastPaymentKES: 425,
+};
+
+export const mockApplications: PesticideApplication[] = [
+  {
+    id: 'APP-001',
+    cropType: 'Tomatoes',
+    plotName: 'Plot 1 — Mwea North',
+    chemical: 'Ridomil Gold MZ',
+    sprayedDate: '2026-05-04',
+    phiDays: 7,
+    safeHarvestDate: '2026-05-11',
+    status: 'safe',
+    batchCode: 'ZC-BATCH-055-2026',
+  },
+  {
+    id: 'APP-002',
+    cropType: 'French Beans',
+    plotName: 'Plot 2 — Mwea South',
+    chemical: 'Chlorpyrifos',
+    sprayedDate: '2026-05-05',
+    phiDays: 14,
+    safeHarvestDate: '2026-05-19',
+    status: 'pending',
+  },
+  {
+    id: 'APP-003',
+    cropType: 'Tomatoes',
+    plotName: 'Plot 3 — Kangai',
+    chemical: 'Dimethoate',
+    sprayedDate: '2026-04-20',
+    phiDays: 14,
+    safeHarvestDate: '2026-05-04',
+    status: 'expired',
+    batchCode: 'ZC-BATCH-042-2026',
+  },
+  {
+    id: 'APP-004',
+    cropType: 'Rice',
+    plotName: 'Mwea Irrigation Block 7',
+    chemical: 'Propiconazole',
+    sprayedDate: '2026-05-07',
+    phiDays: 28,
+    safeHarvestDate: '2026-06-04',
+    status: 'pending',
+  },
+];
+
+export const mockFarmerPickups: FarmerPickup[] = [
+  {
+    id: 'PKP-001',
+    scheduledDate: '2026-05-12',
+    wasteType: 'Tomato Stalks',
+    estimatedWeightKg: 45,
+    riderName: 'James Mwangi',
+    status: 'scheduled',
+  },
+  {
+    id: 'PKP-002',
+    scheduledDate: '2026-04-28',
+    collectedDate: '2026-04-28',
+    wasteType: 'Rice Husks',
+    estimatedWeightKg: 80,
+    actualWeightKg: 85,
+    amountKES: 425,
+    mpesaTransactionId: 'QKL7X3M9P2',
+    riderName: 'James Mwangi',
+    status: 'completed',
+  },
+  {
+    id: 'PKP-003',
+    scheduledDate: '2026-04-10',
+    collectedDate: '2026-04-10',
+    wasteType: 'French Bean Stalks',
+    estimatedWeightKg: 30,
+    actualWeightKg: 32,
+    amountKES: 160,
+    mpesaTransactionId: 'QBN4A1Z8C6',
+    riderName: 'Samuel Kariuki',
+    status: 'completed',
+  },
+  {
+    id: 'PKP-004',
+    scheduledDate: '2026-03-22',
+    collectedDate: '2026-03-22',
+    wasteType: 'Rice Husks',
+    estimatedWeightKg: 100,
+    actualWeightKg: 98,
+    amountKES: 490,
+    mpesaTransactionId: 'QMX9T5L2V3',
+    riderName: 'David Gitau',
+    status: 'completed',
+  },
+];
