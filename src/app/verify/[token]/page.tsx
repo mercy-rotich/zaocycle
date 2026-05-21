@@ -14,7 +14,8 @@ async function getCertificate(token: string): Promise<PublicCertificateResponse 
       { cache: 'no-store' }
     );
     if (!res.ok) return null;
-    return res.json();
+    const json = await res.json();
+    return json.data as PublicCertificateResponse;
   } catch {
     return null;
   }

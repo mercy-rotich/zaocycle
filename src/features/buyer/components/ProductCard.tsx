@@ -1,121 +1,70 @@
 import Link from 'next/link';
-import { Flame, ArrowRight, CheckCircle2 } from 'lucide-react';
-import type { BriquetteProduct } from '@/lib/types';
+import { Package, Flame } from 'lucide-react';
+import { formatKES, formatKg } from '@/shared/utils/formatters';
+import type { ProductResponse } from '@/types/api';
 
 interface Props {
-  product: BriquetteProduct;
+  product: ProductResponse;
   featured?: boolean;
 }
 
-const sizeConfig = {
-  'BR-50': {
-    label: 'Best Value',
-    bagW: 'w-24',
-    bagH: 'h-28',
-    accentFrom: 'from-green-600',
-    accentTo: 'to-green-800',
-    glow: 'shadow-green-500/20',
-    badge: 'bg-green-500/20 text-green-300 border-green-500/30',
-    perKg: 17,
-  },
-  'BR-25': {
-    label: 'Most Popular',
-    bagW: 'w-20',
-    bagH: 'h-24',
-    accentFrom: 'from-emerald-600',
-    accentTo: 'to-emerald-800',
-    glow: 'shadow-emerald-500/20',
-    badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-    perKg: 18,
-  },
-  'BR-10': {
-    label: 'Starter Pack',
-    bagW: 'w-16',
-    bagH: 'h-20',
-    accentFrom: 'from-teal-600',
-    accentTo: 'to-teal-800',
-    glow: 'shadow-teal-500/20',
-    badge: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
-    perKg: 20,
-  },
-};
-
-const defaultConfig = {
-  label: '',
-  bagW: 'w-20',
-  bagH: 'h-24',
-  accentFrom: 'from-green-600',
-  accentTo: 'to-green-800',
-  glow: 'shadow-green-500/20',
-  badge: 'bg-green-500/20 text-green-300 border-green-500/30',
-  perKg: 18,
-};
-
 export default function ProductCard({ product, featured = false }: Props) {
-  const cfg = sizeConfig[product.id as keyof typeof sizeConfig] ?? defaultConfig;
+  const checkoutHref = `/buy/checkout?product=${product.id}&qty=1`;
 
   return (
-    <div
-      className={`relative bg-slate-900 rounded-2xl border overflow-hidden flex flex-col transition-all hover:-translate-y-0.5 hover:shadow-xl ${
-        featured
-          ? `border-green-500/50 shadow-lg ${cfg.glow}`
-          : 'border-slate-800'
+    <div className={`relative bg-slate-900 rounded-2xl overflow-hidden flex flex-col transition-all
+      ${featured
+        ? 'ring-2 ring-green-500/50 shadow-xl shadow-green-500/10'
+        : 'ring-1 ring-slate-800 hover:ring-slate-700'
       }`}
     >
-      {/* Label chip */}
-      <div className="absolute top-3 right-3 z-10">
-        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${cfg.badge}`}>
-          {cfg.label}
-        </span>
-      </div>
-
-      {/* Visual — fixed height so all three cards align */}
-      <div className={`bg-gradient-to-br ${cfg.accentFrom} ${cfg.accentTo} h-40 flex items-center justify-center shrink-0`}>
-        <div className="flex flex-col items-center">
-          <div
-            className={`${cfg.bagW} ${cfg.bagH} bg-white/10 border-2 border-white/20 rounded-t-2xl rounded-b-lg flex flex-col items-center justify-center gap-1 shadow-inner`}
-          >
-            <Flame className="w-5 h-5 text-white/70" />
-            <span className="text-white/90 text-xs font-bold">{product.weightKg} kg</span>
-          </div>
-          <div className={`${cfg.bagW} h-2.5 bg-white/15 rounded-b-xl border-2 border-t-0 border-white/20`} />
+      {featured && (
+        <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10">
+          Popular
         </div>
+      )}
+
+      {/* Visual */}
+      <div className={`h-36 flex items-center justify-center
+        ${featured ? 'bg-gradient-to-br from-green-800 to-green-950' : 'bg-slate-800'}`}
+      >
+        {product.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-slate-500">
+            <Flame className={`w-10 h-10 ${featured ? 'text-green-400' : ''}`} />
+            <Package className="w-5 h-5" />
+          </div>
+        )}
       </div>
 
-      {/* Content — flex-1 so all cards stretch to equal height in the grid row */}
-      <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="text-white font-bold text-lg leading-tight">{product.name}</h3>
-          <div className="text-right shrink-0">
-            <p className="text-white font-extrabold text-xl tabular-nums">
-              KES {product.priceKES.toLocaleString()}
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1 gap-3">
+        <div>
+          <p className="text-xs text-slate-500 font-mono uppercase tracking-wider">{product.sku}</p>
+          <h3 className="text-white font-bold text-lg mt-0.5">{product.name}</h3>
+          <p className="text-slate-400 text-sm mt-1 leading-relaxed line-clamp-2">{product.description}</p>
+        </div>
+
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-800">
+          <div>
+            <p className={`font-extrabold text-xl ${featured ? 'text-green-400' : 'text-white'}`}>
+              {formatKES(product.unitPrice)}
             </p>
-            <p className="text-slate-500 text-xs">KES {cfg.perKg}/kg</p>
+            <p className="text-slate-500 text-xs">{formatKg(product.weightKg)} per bag</p>
           </div>
+          <Link
+            href={checkoutHref}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors
+              ${featured
+                ? 'bg-green-600 hover:bg-green-500 text-white'
+                : 'bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200'
+              }`}
+          >
+            Order Now
+          </Link>
         </div>
-
-        <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-1">{product.description}</p>
-
-        {/* Stock indicator */}
-        <div className="flex items-center gap-1.5 mb-4">
-          <CheckCircle2 className="w-3.5 h-3.5 text-green-400 shrink-0" />
-          <span className="text-green-400 text-xs font-medium">
-            {product.stockBags} bags in stock · Free delivery in Kirinyaga
-          </span>
-        </div>
-
-        {/* Order button — simple flex row, no competing alignment */}
-        <Link
-          href={`/buy/checkout?product=${product.id}&qty=1`}
-          className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors ${
-            featured
-              ? 'bg-green-600 hover:bg-green-500 text-white'
-              : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
-          }`}
-        >
-          <span>Order Now</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
       </div>
     </div>
   );

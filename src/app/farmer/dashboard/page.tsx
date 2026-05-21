@@ -1,13 +1,24 @@
-import { Bell, Leaf, Truck, ArrowRight } from 'lucide-react';
+'use client';
+
 import Link from 'next/link';
+import { Bell, Leaf, Truck, ArrowRight } from 'lucide-react';
 import EarningsCard from '@/features/farmer/components/EarningsCard';
 import PHICountdownCard from '@/features/farmer/components/PHICountdownCard';
-import { mockFarmer, mockEarnings, mockApplications } from '@/lib/farmer-mock-data';
+import { useFarmerProfileQuery, useFarmerEarningsQuery } from '@/features/farmer/hooks/useFarmer';
+import { useFarmerApplicationsQuery } from '@/features/farmer/hooks/useApplications';
+import { useRequestPickupMutation } from '@/features/farmer/hooks/usePickups';
+import { useAuthStore } from '@/store/authStore';
 
 export default function FarmerDashboardPage() {
-  const activeApplications = mockApplications.filter((a) => a.status !== 'expired');
-  const safeApplications   = mockApplications.filter((a) => a.status === 'safe');
-  const firstName          = mockFarmer.name.split(' ')[0];
+  const { user } = useAuthStore();
+  const { data: profile } = useFarmerProfileQuery();
+  const { data: earnings } = useFarmerEarningsQuery();
+  const { data: applications = [] } = useFarmerApplicationsQuery();
+  const { mutate: requestPickup, isPending: requesting } = useRequestPickupMutation();
+
+  const firstName = (profile?.fullName ?? user?.displayName ?? 'Farmer').split(' ')[0];
+  const safeApplications = applications.filter((a) => a.status === 'SAFE');
+  const activeApplications = applications.filter((a) => a.status !== 'EXPIRED' && a.status !== 'INVALIDATED');
 
   return (
     <div className="px-4 pt-6">
@@ -23,7 +34,6 @@ export default function FarmerDashboardPage() {
         </div>
         <button className="relative w-9 h-9 bg-slate-800 rounded-lg flex items-center justify-center border border-slate-700">
           <Bell className="w-4 h-4 text-slate-400" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-green-500 rounded-full ring-1 ring-slate-800" />
         </button>
       </div>
 
@@ -31,17 +41,21 @@ export default function FarmerDashboardPage() {
       <div className="mb-5">
         <p className="text-slate-500 text-sm">Habari 👋</p>
         <h1 className="text-white text-2xl font-extrabold mt-0.5 tracking-tight">{firstName}</h1>
-        <p className="text-slate-500 text-xs mt-0.5">
-          {mockFarmer.ward} Ward · {mockFarmer.farmSizeAcres} acres
-        </p>
+        {profile && (
+          <p className="text-slate-500 text-xs mt-0.5">{profile.ward} Ward</p>
+        )}
       </div>
 
       {/* Earnings card */}
       <div className="mb-5">
-        <EarningsCard earnings={mockEarnings} />
+        {earnings ? (
+          <EarningsCard earnings={earnings} />
+        ) : (
+          <div className="h-36 bg-slate-800/50 rounded-2xl animate-pulse" />
+        )}
       </div>
 
-      {/* Request Pickup CTA — only when a crop is certified */}
+      {/* Request Pickup CTA */}
       {safeApplications.length > 0 && (
         <div className="mb-5 bg-green-500/8 border border-green-500/20 rounded-2xl p-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
@@ -55,13 +69,14 @@ export default function FarmerDashboardPage() {
               </p>
             </div>
           </div>
-          <Link
-            href="/farmer/pickups"
-            className="shrink-0 flex items-center gap-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl transition-colors"
+          <button
+            onClick={() => requestPickup(undefined)}
+            disabled={requesting}
+            className="shrink-0 flex items-center gap-1.5 bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl transition-colors"
           >
-            Request
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+            {requesting ? 'Requesting…' : 'Request'}
+            {!requesting && <ArrowRight className="w-3.5 h-3.5" />}
+          </button>
         </div>
       )}
 
@@ -79,7 +94,7 @@ export default function FarmerDashboardPage() {
 
         {activeApplications.length > 0 ? (
           <div className="space-y-3">
-            {activeApplications.map((app) => (
+            {activeApplications.slice(0, 3).map((app) => (
               <PHICountdownCard key={app.id} application={app} />
             ))}
           </div>

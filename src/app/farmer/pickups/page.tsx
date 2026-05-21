@@ -1,11 +1,14 @@
+'use client';
+
 import { Package } from 'lucide-react';
 import PickupsClient from '@/features/farmer/components/PickupsClient';
-import { mockFarmerPickups } from '@/lib/farmer-mock-data';
+import { useFarmerPickupsQuery } from '@/features/farmer/hooks/usePickups';
 
 export default function PickupsPage() {
+  const { data: pickups = [], isLoading } = useFarmerPickupsQuery();
+
   return (
     <div className="px-4 pt-6">
-      {/* Page header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-9 h-9 bg-slate-800 rounded-xl flex items-center justify-center border border-slate-700">
           <Package className="w-5 h-5 text-green-400" />
@@ -16,8 +19,15 @@ export default function PickupsPage() {
         </div>
       </div>
 
-      {/* Tabbed list — client component */}
-      <PickupsClient pickups={mockFarmerPickups} />
+      {isLoading ? (
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-28 bg-slate-800/50 rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      ) : (
+        <PickupsClient pickups={pickups} />
+      )}
     </div>
   );
 }

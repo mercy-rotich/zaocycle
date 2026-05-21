@@ -14,8 +14,8 @@ async function getTopProducts(): Promise<ProductResponse[]> {
       next: { revalidate: 60 },
     });
     if (!res.ok) return [];
-    const products: ProductResponse[] = await res.json();
-    return products.slice(0, 3);
+    const json = await res.json();
+    return (json.data as ProductResponse[]).slice(0, 3);
   } catch {
     return [];
   }

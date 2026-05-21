@@ -11,8 +11,8 @@ export default function BuyNav() {
 
   const links = [
     { href: '/buy', label: 'Products' },
-    { href: '/#how-it-works', label: 'How It Works' },
-    { href: '/dashboard', label: 'Impact' },
+    { href: '/buy/orders', label: 'My Orders' },
+    { href: '/buy/profile', label: 'Profile' },
   ];
 
   return (
@@ -56,7 +56,7 @@ export default function BuyNav() {
               Order
             </Link>
             <Link
-              href="/buy/orders/ORD-2026-0042"
+              href="/buy/orders"
               className="hidden sm:flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
             >
               <ClipboardList className="w-4 h-4" />
@@ -88,7 +88,7 @@ export default function BuyNav() {
             </Link>
           ))}
           <Link
-            href="/buy/orders/ORD-2026-0042"
+            href="/buy/orders"
             onClick={() => setMenuOpen(false)}
             className="block py-2.5 text-sm font-medium text-green-400 hover:text-green-300 transition-colors"
           >

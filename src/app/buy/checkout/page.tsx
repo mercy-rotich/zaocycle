@@ -2,7 +2,8 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import CheckoutClient from '@/features/buyer/components/CheckoutClient';
-import { mockProducts } from '@/lib/school-mock-data';
+import { formatKES } from '@/shared/utils/formatters';
+import type { ProductResponse } from '@/types/api';
 
 export const metadata = {
   title: 'Checkout — ZaoCycle',
@@ -12,17 +13,31 @@ interface Props {
   searchParams: Promise<{ product?: string; qty?: string }>;
 }
 
-export default async function CheckoutPage({ searchParams }: Props) {
-  const { product: productId = 'BR-25', qty: qtyStr = '1' } = await searchParams;
+async function getProduct(id: string): Promise<ProductResponse | null> {
+  try {
+    const res = await fetch(`${process.env.API_BASE_URL}/products/${id}`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data as ProductResponse;
+  } catch {
+    return null;
+  }
+}
 
-  const product = mockProducts.find((p) => p.id === productId);
+export default async function CheckoutPage({ searchParams }: Props) {
+  const { product: productId = '', qty: qtyStr = '1' } = await searchParams;
+
+  if (!productId) notFound();
+
+  const product = await getProduct(productId);
   if (!product) notFound();
 
-  const qty = Math.max(1, Math.min(parseInt(qtyStr) || 1, product.stockBags));
+  const qty = Math.max(1, parseInt(qtyStr) || 1);
 
   return (
     <div>
-      {/* Header */}
       <div className="sticky top-14 z-30 border-b border-slate-800/60 bg-slate-950/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 py-3.5">
@@ -34,7 +49,7 @@ export default async function CheckoutPage({ searchParams }: Props) {
             </Link>
             <div>
               <h1 className="text-white font-bold text-base leading-tight">Checkout</h1>
-              <p className="text-slate-500 text-xs">{product.name} · KES {product.priceKES.toLocaleString()} / sack</p>
+              <p className="text-slate-500 text-xs">{product.name} · {formatKES(product.unitPrice)} / bag</p>
             </div>
           </div>
         </div>

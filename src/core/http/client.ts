@@ -15,7 +15,13 @@ apiClient.interceptors.request.use((config) => {
 });
 
 apiClient.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    // Unwrap the standard ApiResponse<T> envelope so callers get T directly
+    if (res.data !== null && typeof res.data === 'object' && 'success' in res.data && 'data' in res.data) {
+      return { ...res, data: res.data.data };
+    }
+    return res;
+  },
   async (error) => {
     if (error.response?.status === 401 && !error.config._retry) {
       error.config._retry = true;
@@ -32,8 +38,10 @@ apiClient.interceptors.response.use(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
           { refreshToken }
         );
-        login(data);
-        error.config.headers.Authorization = `Bearer ${data.accessToken}`;
+        // data is ApiResponse<TokenResponse> — unwrap before storing
+        const tokenData = data.data;
+        login(tokenData);
+        error.config.headers.Authorization = `Bearer ${tokenData.accessToken}`;
         return apiClient(error.config);
       } catch {
         logout();

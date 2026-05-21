@@ -196,6 +196,15 @@ export interface WasteIntakeBatch {
   createdAt: string;
 }
 
+export interface RiderEarningsResponse {
+  total: number;
+  thisMonth: number;
+  thisWeek: number;
+  today: number;
+  pickupCount: number;
+  totalWeightKg: number;
+}
+
 export interface BriquetteBatch {
   id: string;
   batchNumber: string;
