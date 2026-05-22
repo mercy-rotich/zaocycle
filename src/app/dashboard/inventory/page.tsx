@@ -147,7 +147,11 @@ function BatchForm({ intakes, onDone }: { intakes: import('@/types/api').WasteIn
 
   const onSubmit = handleSubmit((data) =>
     record(
-      { ...data, sourceIntakeId: data.sourceIntakeId || undefined },
+      {
+        ...data,
+        producedAt: new Date(data.producedAt).toISOString(),
+        sourceIntakeId: data.sourceIntakeId || undefined,
+      },
       { onSuccess: () => { reset(); onDone(); } }
     )
   );

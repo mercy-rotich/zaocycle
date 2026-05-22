@@ -23,13 +23,16 @@ apiClient.interceptors.response.use(
     return res;
   },
   async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
+    const status = error.response?.status;
+    const { useAuthStore } = require('@/store/authStore');
+
+    if (status === 401 && !error.config._retry) {
       error.config._retry = true;
-      const { useAuthStore } = require('@/store/authStore');
       const { refreshToken, login, logout } = useAuthStore.getState();
 
       if (!refreshToken) {
         logout();
+        if (typeof window !== 'undefined') window.location.href = '/login';
         return Promise.reject(error);
       }
 
@@ -47,6 +50,14 @@ apiClient.interceptors.response.use(
         logout();
         if (typeof window !== 'undefined') window.location.href = '/login';
       }
+    }
+
+    // 403 = authenticated but wrong role, or no token sent at all.
+    // Either way the session is broken — clear state and send to login.
+    if (status === 403) {
+      useAuthStore.getState().logout();
+      if (typeof window !== 'undefined') window.location.href = '/login';
+      return Promise.reject(new Error('Session expired. Please log in again.'));
     }
 
     const message = error.response?.data?.message ?? 'An unexpected error occurred';

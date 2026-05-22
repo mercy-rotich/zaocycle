@@ -5,7 +5,8 @@ export const formatKES = (amount: number) =>
 
 export const formatKg = (kg: number) => `${kg.toFixed(2)} kg`;
 
-export const formatDate = (iso: string) => format(parseISO(iso), 'dd MMM yyyy');
+export const formatDate = (iso: string | null | undefined) =>
+  iso ? format(parseISO(iso), 'dd MMM yyyy') : '—';
 
-export const formatDateTime = (iso: string) =>
-  format(parseISO(iso), 'dd MMM yyyy, HH:mm');
+export const formatDateTime = (iso: string | null | undefined) =>
+  iso ? format(parseISO(iso), 'dd MMM yyyy, HH:mm') : '—';

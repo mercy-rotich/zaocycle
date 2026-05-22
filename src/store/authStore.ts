@@ -24,8 +24,12 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: t.refreshToken,
           user: t.user,
         }),
-      logout: () =>
-        set({ accessToken: null, refreshToken: null, user: null }),
+      logout: () => {
+        if (typeof window !== 'undefined') {
+          document.cookie = 'zao-role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict';
+        }
+        return set({ accessToken: null, refreshToken: null, user: null });
+      },
     }),
     {
       name: 'zao-auth',
