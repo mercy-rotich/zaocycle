@@ -11,7 +11,7 @@ async function getCertificate(token: string): Promise<PublicCertificateResponse 
   try {
     const res = await fetch(
       `${process.env.API_BASE_URL}/certificates/verify/${token}`,
-      { cache: 'no-store' }
+      { cache: 'no-store', signal: AbortSignal.timeout(5000) }
     );
     if (!res.ok) return null;
     const json = await res.json();

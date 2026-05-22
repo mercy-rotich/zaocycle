@@ -17,6 +17,7 @@ async function getProduct(id: string): Promise<ProductResponse | null> {
   try {
     const res = await fetch(`${process.env.API_BASE_URL}/products/${id}`, {
       cache: 'no-store',
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return null;
     const json = await res.json();

@@ -1,6 +1,6 @@
 import { ShieldCheck, Sprout, Zap, Users } from 'lucide-react';
 import VerifyInput from '@/features/buyer/components/VerifyInput';
-import CertifiedCard from '@/features/buyer/components/CertifiedCard';
+import { CertifiedBatchList } from '@/features/buyer/components/CertifiedBatchList';
 import { mockFarmRecords } from '@/lib/mock-data';
 
 export const metadata = {
@@ -109,23 +109,15 @@ export default function BuyerPage() {
                 <span className="text-green-400 text-xs font-semibold">{totalCount} active</span>
               </div>
             </div>
-            <div className="divide-y divide-slate-800/60">
-              {mockFarmRecords.map((record) => (
-                <div key={record.id} className="px-4 py-3">
-                  <CertifiedCard record={record} />
-                </div>
-              ))}
-            </div>
+            <CertifiedBatchList records={mockFarmRecords} variant="desktop" />
             <div className="px-5 py-3 border-t border-slate-800 bg-slate-800/20 text-center">
               <p className="text-slate-600 text-xs">Tap any batch to see its full chemical safety record</p>
             </div>
           </div>
 
-          {/* Mobile: flat list, no outer border */}
-          <div className="space-y-2 lg:hidden">
-            {mockFarmRecords.map((record) => (
-              <CertifiedCard key={record.id} record={record} />
-            ))}
+          {/* Mobile: show first 5, expand on tap */}
+          <div className="lg:hidden">
+            <CertifiedBatchList records={mockFarmRecords} variant="mobile" />
           </div>
         </div>
 

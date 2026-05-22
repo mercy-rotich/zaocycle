@@ -26,6 +26,7 @@ export const useAuthStore = create<AuthState>()(
         }),
       logout: () => {
         if (typeof window !== 'undefined') {
+          // Clear any role-based routing cookies if they exist
           document.cookie = 'zao-role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict';
         }
         return set({ accessToken: null, refreshToken: null, user: null });
@@ -33,7 +34,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'zao-auth',
-      // Only persist refresh token + user; access token stays in-memory only
+     
       partialize: (s) => ({ refreshToken: s.refreshToken, user: s.user }),
     }
   )

@@ -6,8 +6,22 @@ export const apiClient = axios.create({
   timeout: 15000,
 });
 
+// --- REFRESH TOKEN CONCURRENCY LOCK ---
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+// Adds failed requests to a queue while a refresh is happening
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+// Processes the queue once the new token arrives
+const onRefreshed = (token: string) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
 apiClient.interceptors.request.use((config) => {
-  // Lazy import avoids circular dependency at module load time
   const { useAuthStore } = require('@/store/authStore');
   const token = useAuthStore.getState().accessToken;
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -24,13 +38,28 @@ apiClient.interceptors.response.use(
   },
   async (error) => {
     const status = error.response?.status;
+    const originalRequest = error.config;
     const { useAuthStore } = require('@/store/authStore');
 
-    if (status === 401 && !error.config._retry) {
-      error.config._retry = true;
+    // Handle 401 Unauthorized
+    if (status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If a refresh is already in progress, wait for it to finish
+        return new Promise((resolve) => {
+          subscribeTokenRefresh((newToken: string) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(apiClient(originalRequest));
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
       const { refreshToken, login, logout } = useAuthStore.getState();
 
       if (!refreshToken) {
+        isRefreshing = false;
         logout();
         if (typeof window !== 'undefined') window.location.href = '/login';
         return Promise.reject(error);
@@ -41,19 +70,33 @@ apiClient.interceptors.response.use(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
           { refreshToken }
         );
-        // data is ApiResponse<TokenResponse> — unwrap before storing
-        const tokenData = data.data;
+        
+        // Unwrap token response
+        const tokenData = data.data; 
+        
+        // Update global state
         login(tokenData);
-        error.config.headers.Authorization = `Bearer ${tokenData.accessToken}`;
-        return apiClient(error.config);
-      } catch {
+        
+        // Notify all queued requests that the token is ready
+        onRefreshed(tokenData.accessToken);
+        
+        // Retry the original request
+        originalRequest.headers.Authorization = `Bearer ${tokenData.accessToken}`;
+        return apiClient(originalRequest);
+        
+      } catch (refreshError) {
+        // If the refresh fails, wipe the queue and log the user out
+        refreshSubscribers = [];
         logout();
         if (typeof window !== 'undefined') window.location.href = '/login';
+        return Promise.reject(refreshError);
+      } finally {
+        // Always release the lock
+        isRefreshing = false; 
       }
     }
 
     // 403 = authenticated but wrong role, or no token sent at all.
-    // Either way the session is broken — clear state and send to login.
     if (status === 403) {
       useAuthStore.getState().logout();
       if (typeof window !== 'undefined') window.location.href = '/login';

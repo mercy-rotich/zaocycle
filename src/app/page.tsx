@@ -12,6 +12,7 @@ async function getTopProducts(): Promise<ProductResponse[]> {
   try {
     const res = await fetch(`${process.env.API_BASE_URL}/products`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return [];
     const json = await res.json();

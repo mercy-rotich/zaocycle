@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
   ArrowRight, ScanLine, ShieldCheck, Leaf, TreePine,
-  Users, Package, Banknote, Zap, CheckCircle2, Clock, Bike, LogIn,
+  Users, Package, Banknote, Zap, CheckCircle2, Clock, Bike,
 } from 'lucide-react';
 
 const trustSignals = [
@@ -62,7 +62,7 @@ export default function HeroSection() {
 
             <div className="flex flex-wrap gap-4 mb-14">
               <Link
-                href="/register"
+                href="/buy"
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-semibold px-6 py-3.5 rounded-xl transition-all hover:shadow-xl hover:shadow-green-500/20"
               >
                 <Package className="w-5 h-5" />
@@ -70,11 +70,11 @@ export default function HeroSection() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/login"
+                href="/buyer"
                 className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3.5 rounded-xl border border-slate-700 transition-all"
               >
-                <LogIn className="w-4 h-4" />
-                Staff Login
+                <ScanLine className="w-4 h-4" />
+                Verify Produce Safety
               </Link>
             </div>
 
