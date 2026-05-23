@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Leaf, Users, Bike, LogOut, ShieldCheck } from 'lucide-react';
+import { Leaf, Users, Bike, LogOut, ShieldCheck, Menu, X } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useState, useEffect } from 'react';
 
 const NAV = [
   { href: '/admin/staff',  label: 'Staff',  icon: Users },
@@ -14,6 +15,12 @@ export default function AdminNav() {
   const pathname = usePathname();
   const { logout, user } = useAuthStore();
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Close menu when pathname changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   function handleLogout() {
     logout();
@@ -22,7 +29,28 @@ export default function AdminNav() {
   }
 
   return (
-    <aside className="hidden lg:flex flex-col w-56 shrink-0 bg-slate-900 border-r border-slate-800 min-h-screen sticky top-0">
+    <>
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden fixed top-4 left-4 z-40 p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition-colors"
+        aria-label="Toggle menu"
+      >
+        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
+      {/* Mobile menu overlay */}
+      {isOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Navigation sidebar */}
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen lg:h-auto flex flex-col w-56 shrink-0 bg-slate-900 border-r border-slate-800 min-h-screen z-40 transition-transform duration-200 lg:translate-x-0 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 py-5 border-b border-slate-800">
         <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center shrink-0">
@@ -76,6 +104,7 @@ export default function AdminNav() {
           Log Out
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

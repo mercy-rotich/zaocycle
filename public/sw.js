@@ -1,4 +1,4 @@
-const CACHE = 'zaocycle-v1';
+const CACHE = 'zaocycle-v2';
 const PRECACHE = ['/', '/buy', '/scan/demo', '/zaocycle-icon.svg'];
 
 self.addEventListener('install', (event) => {

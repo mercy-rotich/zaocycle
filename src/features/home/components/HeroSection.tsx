@@ -40,9 +40,9 @@ export default function HeroSection() {
           {/* ── Left: headline + CTAs ── */}
           <div>
             <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-1.5 mb-8">
-              <Leaf className="w-3.5 h-3.5 text-green-400" />
+              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shrink-0" />
               <span className="text-green-400 text-xs font-semibold tracking-widest uppercase">
-                Kirinyaga Youth Summit 2026 — Innovation Pitch
+                Now live in Kirinyaga County
               </span>
             </div>
 
@@ -62,7 +62,7 @@ export default function HeroSection() {
 
             <div className="flex flex-wrap gap-4 mb-14">
               <Link
-                href="/buy"
+                href="/products"
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-semibold px-6 py-3.5 rounded-xl transition-all hover:shadow-xl hover:shadow-green-500/20"
               >
                 <Package className="w-5 h-5" />

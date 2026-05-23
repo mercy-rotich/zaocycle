@@ -50,7 +50,7 @@ export default function FarmerProfilePage() {
   }
 
   return (
-    <div className="px-4 pt-6">
+    <div className="px-4 pt-6 lg:px-10 lg:pt-8 lg:max-w-2xl lg:mx-auto">
       {/* Avatar + name */}
       <div className="flex flex-col items-center text-center mb-8">
         <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-700 rounded-full flex items-center justify-center mb-3 ring-4 ring-green-500/20">

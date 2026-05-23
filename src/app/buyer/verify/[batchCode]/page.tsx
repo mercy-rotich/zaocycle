@@ -247,21 +247,21 @@ export default async function VerifyPage({ params }: Props) {
   if (record) return <VerifyResult record={record} />;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center gap-3 mb-8">
-        <Link
-          href="/buyer"
-          className="w-9 h-9 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl flex items-center justify-center transition-colors shrink-0"
-        >
-          <ArrowLeft className="w-5 h-5 text-slate-300" />
-        </Link>
-        <div>
-          <p className="text-slate-400 text-xs">Verification result</p>
-          <p className="text-white text-sm font-mono font-bold">{decoded}</p>
+    <div className="px-4 sm:px-6 py-12">
+      <div className="w-full max-w-md mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <Link
+            href="/buyer"
+            className="w-9 h-9 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl flex items-center justify-center transition-colors shrink-0"
+          >
+            <ArrowLeft className="w-5 h-5 text-slate-300" />
+          </Link>
+          <div>
+            <p className="text-slate-400 text-xs">Verification result</p>
+            <p className="text-white text-sm font-mono font-bold">{decoded}</p>
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-md">
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center mb-6">
           <div className="w-14 h-14 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
             <SearchX className="w-7 h-7 text-slate-500" />

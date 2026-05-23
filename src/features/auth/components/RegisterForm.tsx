@@ -50,49 +50,58 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <Field label="Display Name" error={errors.displayName?.message}>
-        <input {...register('displayName')} placeholder="St. Mary's Primary" className={INPUT_CLASS} />
-      </Field>
 
-      <Field label="Email" error={errors.email?.message}>
-        <input type="email" {...register('email')} placeholder="you@example.com" className={INPUT_CLASS} />
-      </Field>
+      {/* Row 1 */}
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="Display Name" error={errors.displayName?.message}>
+          <input {...register('displayName')} placeholder="St. Mary's Primary" className={INPUT_CLASS} />
+        </Field>
+        <Field label="Phone" error={errors.phone?.message}>
+          <input type="tel" {...register('phone')} placeholder="+254712345678" className={INPUT_CLASS} />
+        </Field>
+      </div>
 
-      <Field label="Password" error={errors.password?.message}>
-        <input type="password" {...register('password')} placeholder="Min. 6 characters" className={INPUT_CLASS} />
-      </Field>
+      {/* Row 2 */}
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="Email" error={errors.email?.message}>
+          <input type="email" {...register('email')} placeholder="you@example.com" className={INPUT_CLASS} />
+        </Field>
+        <Field label="Password" error={errors.password?.message}>
+          <input type="password" {...register('password')} placeholder="Min. 6 characters" className={INPUT_CLASS} />
+        </Field>
+      </div>
 
-      <Field label="Phone" error={errors.phone?.message}>
-        <input type="tel" {...register('phone')} placeholder="+254712345678" className={INPUT_CLASS} />
-      </Field>
+      {/* Row 3 */}
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="Buyer Type" error={errors.buyerType?.message}>
+          <select {...register('buyerType')} className={SELECT_CLASS}>
+            <option value="">Select type…</option>
+            <option value="SCHOOL">School</option>
+            <option value="INDIVIDUAL">Individual</option>
+            <option value="INSTITUTION">Institution</option>
+            <option value="BUSINESS">Business</option>
+          </select>
+        </Field>
+        <Field label="Ward (optional)" error={errors.ward?.message}>
+          <select {...register('ward')} className={SELECT_CLASS}>
+            <option value="">Select ward…</option>
+            <option value="MWEA">Mwea</option>
+            <option value="GICHUGU">Gichugu</option>
+            <option value="KIRINYAGA_CENTRAL">Kirinyaga Central</option>
+            <option value="NDIA">Ndia</option>
+          </select>
+        </Field>
+      </div>
 
-      <Field label="Buyer Type" error={errors.buyerType?.message}>
-        <select {...register('buyerType')} className={SELECT_CLASS}>
-          <option value="">Select type…</option>
-          <option value="SCHOOL">School</option>
-          <option value="INDIVIDUAL">Individual</option>
-          <option value="INSTITUTION">Institution</option>
-          <option value="BUSINESS">Business</option>
-        </select>
-      </Field>
-
-      <Field label="Ward (optional)" error={errors.ward?.message}>
-        <select {...register('ward')} className={SELECT_CLASS}>
-          <option value="">Select ward…</option>
-          <option value="MWEA">Mwea</option>
-          <option value="GICHUGU">Gichugu</option>
-          <option value="KIRINYAGA_CENTRAL">Kirinyaga Central</option>
-          <option value="NDIA">Ndia</option>
-        </select>
-      </Field>
-
-      <Field label="Contact Person (optional)" error={errors.contactPerson?.message}>
-        <input {...register('contactPerson')} placeholder="Alice Wanjiru" className={INPUT_CLASS} />
-      </Field>
-
-      <Field label="Delivery Address (optional)" error={errors.address?.message}>
-        <input {...register('address')} placeholder="Main Street, Mwea" className={INPUT_CLASS} />
-      </Field>
+      {/* Row 4 */}
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="Contact Person (optional)" error={errors.contactPerson?.message}>
+          <input {...register('contactPerson')} placeholder="Alice Wanjiru" className={INPUT_CLASS} />
+        </Field>
+        <Field label="Delivery Address (optional)" error={errors.address?.message}>
+          <input {...register('address')} placeholder="Main Street, Mwea" className={INPUT_CLASS} />
+        </Field>
+      </div>
 
       <button
         type="submit"
